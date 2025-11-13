@@ -10,7 +10,7 @@ import os
 
 import requests
 
-API_KEY = "d72e4b87a7294a71a4b205350253103"
+API_KEY = "fab72e45aee8439e81615707251311"
 CITY = "Tashkent"
 URL = f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={CITY}&days=10&aqi=no&alerts=no"
 
@@ -164,7 +164,7 @@ class Ui_Dialog:
         self.graphicsView.setScene(self.scene)
 
         # 📌 ORQA FON RASMNI YUKLASH
-        file_path = r"C:\Users\PRESTIGE\Documents\rasmlar\martin-masson-eGs_tNhEMvQ-unsplash.jpg"
+        file_path = r"/home/doston/Pictures/desktop image/"
         pixmap = QPixmap(file_path)
 
         if pixmap.isNull():
@@ -254,7 +254,7 @@ class Ui_Dialog:
         QtCore.QMetaObject.connectSlotsByName(Dialog)
      
 
-     def retranslateUi(self, Dialog):
+     '''def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.label.setText(_translate("Dialog", f"📍 Shahar: {CITY} \n 🌡️ Harorat: {int(daily_forecast[bugun]['temp_max'])}°C"))
@@ -296,7 +296,47 @@ class Ui_Dialog:
             f"🌬️ Shamol: {int(sum(daily_forecast[oltinchi]['wind_speed']) / len(daily_forecast[oltinchi]['wind_speed']))} m/s \n"
             f"🌍 Bosim: {int(daily_forecast[oltinchi]['pressure'][0])} hPa"))
 
-        self.pushButton.setText(_translate("Dialog", "Ma'lumotlarni yangilash"))
+        self.pushButton.setText(_translate("Dialog", "Ma'lumotlarni yangilash"))'''
+     def retranslateUi(self, Dialog):
+            _translate = QtCore.QCoreApplication.translate
+            Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+
+            # Yordamchi funksiya: Agar sana mavjud bo'lsa ma'lumotni qaytaradi, yo'qsa "Ma'lumot yo'q" deydi
+            def get_weather_text(date_key):
+                if date_key in daily_forecast:
+                    data = daily_forecast[date_key]
+                    avg_humidity = int(sum(data['humidity']) / len(data['humidity']))
+                    avg_wind = int(sum(data['wind_speed']) / len(data['wind_speed']))
+                    pressure = int(data['pressure'][0])
+                    return (f"🌡️ Harorat: {int(data['temp_max'])}°C \n"
+                            f"💧 Namlik: {avg_humidity}% \n"
+                            f"🌬️ Shamol: {avg_wind} m/s \n"
+                            f"🌍 Bosim: {pressure} hPa")
+                else:
+                    return "Ma'lumot mavjud emas\n(Free API limiti)"
+
+            # Bugungi kun uchun (xavfsiz tekshirish)
+            if bugun in daily_forecast:
+                self.label.setText(_translate("Dialog", f"📍 Shahar: {CITY} \n 🌡️ Harorat: {int(daily_forecast[bugun]['temp_max'])}°C"))
+                d = daily_forecast[bugun]
+                self.label_2.setText(_translate("Dialog", 
+                    f"💧 Namlik: {int(sum(d['humidity']) / len(d['humidity']))}% \n "
+                    f"🌬️ Shamol tezligi: {int(sum(d['wind_speed']) / len(d['wind_speed']))} m/s \n "
+                    f"🌍 Bosim: {int(d['pressure'][0])} hPa"))
+            else:
+                self.label.setText("Ma'lumot yo'q")
+
+            self.label_3.setText(_translate("Dialog", "Hozirgi vaqt"))
+            self.label_4.setText(_translate("Dialog", datetime.now().strftime("%H:%M:%S")))
+
+            # Barcha kunlar uchun yordamchi funksiyadan foydalanamiz
+            self.textBrowser.setText(_translate("Dialog", get_weather_text(ertaga)))
+            self.textBrowser_2.setText(_translate("Dialog", get_weather_text(indinga)))
+            self.textBrowser_3.setText(_translate("Dialog", get_weather_text(torinchi)))
+            self.textBrowser_4.setText(_translate("Dialog", get_weather_text(beshinchi)))
+            self.textBrowser_5.setText(_translate("Dialog", get_weather_text(oltinchi)))
+
+            self.pushButton.setText(_translate("Dialog", "Ma'lumotlarni yangilash"))
 
 
 if __name__ == "__main__":
